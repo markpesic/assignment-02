@@ -1,0 +1,4 @@
+- a brief report describing the solution, in particular the diagram of the FSMs and the 
+	representation of the schema/breadboard – using tools such as TinkerCad or Fritzing 
+- a short video (or the link to a video on the cloud) demonstrating the system
+
