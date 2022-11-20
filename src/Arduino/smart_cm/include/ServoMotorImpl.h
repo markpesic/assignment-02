@@ -1,6 +1,5 @@
 #ifndef __SERVO_MOTOR_IMPL__
 #define __SERVO_MOTOR_IMPL__
-
 #include "ServoMotor.h"
 #include <Servo.h>
 
