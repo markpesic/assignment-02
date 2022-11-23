@@ -1,5 +1,6 @@
 #include "SubsystemLight.h"
 #include "Arduino.h"
+#include "globals.h"
 
 SubSystemLight::SubSystemLight(int LA_pin, int LS_pin, int PIR_pin){
     this->LA_pin = LA_pin;
@@ -33,23 +34,27 @@ void SubSystemLight::detectSomeoneAfterT1(){
 }
 
 void SubSystemLight::tick(){
-    switch (this->state)
-    {
-    case OFF:
-        Serial.println(String(this->pir->isDetected())+" "+String(this->ls->getLightIntensity()) );
-        if(this->pir->isDetected() && this->ls->getLightIntensity() < this->THls){
-            this->led->switchOn();
-            this->time_start = 0;
-            state = ON;
+    if(disable_light_system){
+        this->led->switchOff();
+    }else{
+        switch (this->state)
+        {
+        case OFF:
+            Serial.println(String(this->pir->isDetected())+" "+String(this->ls->getLightIntensity()) );
+            if(this->pir->isDetected() && this->ls->getLightIntensity() < this->THls){
+                this->led->switchOn();
+                this->time_start = 0;
+                state = ON;
+            }
+            break;
+        case ON:
+            Serial.println("The time passed is: "+String(this->time_start)+" The led is on with intensity: "+String(this->ls->getLightIntensity()) );
+            if(this->time_start >= this->t1 || this->ls->getLightIntensity() >= this->THls){
+                this->led->switchOff();
+                state = OFF;
+            }
+            this->detectSomeoneAfterT1();
+            break;
         }
-        break;
-    case ON:
-        Serial.println("The time passed is: "+String(this->time_start)+" The led is on with intensity: "+String(this->ls->getLightIntensity()) );
-        if(this->time_start >= this->t1 || this->ls->getLightIntensity() >= this->THls){
-            this->led->switchOff();
-            state = OFF;
-        }
-        this->detectSomeoneAfterT1();
-        break;
     }
 }

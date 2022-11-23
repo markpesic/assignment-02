@@ -2,6 +2,7 @@
 #include "Scheduler.h"
 #include "SubsystemLight.h"
 #include "SubsystemRiverFlow.h"
+#include "globals.h"
 
 #define LED_A 13
 #define LED_B 12
@@ -16,6 +17,8 @@
 #define SDA A4 
 #define SCL A5
 
+bool disable_light_system = false;
+
 Scheduler sched;
 
 void setup() {
@@ -23,9 +26,9 @@ void setup() {
     Timer1.initialize(1000);
     sched.init(250);
 
-    Task *t0 = new SubSystemLight(LED_A, LS_PIN, PIR_PIN);
-    t0->init(500);
-    sched.addTask(t0);
+    // Task *t0 = new SubSystemLight(LED_A, LS_PIN, PIR_PIN);
+    // t0->init(500);
+    // sched.addTask(t0);
 
     Task *t1 = new SubsystemRiverFlow(LED_B, LED_C, ECHO_PIN, TRIG_PIN, POT_PIN,
     SDA, SCL, BUTTON_PIN, SERVO_PIN);

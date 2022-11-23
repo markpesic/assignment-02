@@ -11,11 +11,12 @@ Timer::Timer(){
     flag = false;
 }
 
-void Timer::setupInitialFreq(int period){
+void Timer::setupInitialFreq(unsigned long period){
     Timer1.initialize(period);
 }
 
-void Timer::setupPeriod(int period){
+void Timer::setupPeriod(unsigned long period){
+    Serial.println(period);
     Timer1.setPeriod(period);
     Timer1.attachInterrupt(isr);
 }

@@ -6,8 +6,8 @@
 class Timer{
     public:
     Timer();
-    void setupInitialFreq(int period);
-    void setupPeriod(int period);
+    void setupInitialFreq(unsigned long period);
+    void setupPeriod(unsigned long period);
     void waitForNextTick();
 };
 

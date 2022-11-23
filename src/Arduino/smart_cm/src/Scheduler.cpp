@@ -2,7 +2,7 @@
 
 void Scheduler::init(int basePeriod){
   this->basePeriod = basePeriod;
-  timer.setupPeriod(basePeriod*1000);  
+  timer.setupPeriod(((unsigned long)basePeriod)*1000);  
   nTasks = 0;
 }
 
@@ -18,6 +18,7 @@ bool Scheduler::addTask(Task* task){
   
 void Scheduler::schedule(){
   timer.waitForNextTick();
+  //Serial.println("prova");
   for (int i = 0; i < nTasks; i++){
     if (taskList[i]->updateAndCheckTime(basePeriod)){
       taskList[i]->tick();

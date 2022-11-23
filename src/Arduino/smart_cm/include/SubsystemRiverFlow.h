@@ -24,8 +24,9 @@ class SubsystemRiverFlow : public Task{
     int period;
     int time_start;
 
-    const float TWL_pre_alarm = 300.0f;
-    const float TWL_alarm = 100.0f;
+    const float TWL_pre_alarm = 40.0f;
+    const float TWL_alarm = 10.0f;
+    const float TWL_max = 1.0f;
 
     const int PE_normal = 1000;
     const int PE_pre_alarm = 500;

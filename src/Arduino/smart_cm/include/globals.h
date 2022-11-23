@@ -1,0 +1,1 @@
+extern bool disable_light_system;

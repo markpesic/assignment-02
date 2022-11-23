@@ -1,7 +1,7 @@
 #include "SonarImpl.h"
 #include "Arduino.h"
 
-const float vs = 331.45 + 0.62*20;
+const float vs = 331.45 + 0.62*6;
 
 SonarImpl::SonarImpl(int trigPin, int echoPin){
   this->trigPin = trigPin;
@@ -21,5 +21,5 @@ float SonarImpl::getDistance(){
   float tUS = pulseIn(echoPin, HIGH);
   float t = tUS / 1000.0 / 1000.0 / 2;
   float d = t*vs;
-  return d;
+  return d*100.0f;
 }
