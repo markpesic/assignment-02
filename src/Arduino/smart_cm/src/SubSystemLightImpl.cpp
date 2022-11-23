@@ -6,7 +6,6 @@ SubSystemLight::SubSystemLight(int LA_pin, int LS_pin, int PIR_pin){
     this->LS_pin = LS_pin;
     this->PIR_pin = PIR_pin;
     this->time_start = 0;
-    this->detected = false;
 }
 
 void SubSystemLight::init(int period){
@@ -18,6 +17,7 @@ void SubSystemLight::init(int period){
     this->period = period;
 }
 
+/* verifies if in t1 seconds someone is detected if not  */
 void SubSystemLight::detectSomeoneAfterT1(){
     if(this->time_start < this->t1){
         bool detected = this->pir->isDetected();
@@ -40,11 +40,11 @@ void SubSystemLight::tick(){
         if(this->pir->isDetected() && this->ls->getLightIntensity() < this->THls){
             this->led->switchOn();
             this->time_start = 0;
-            this->detected = false;
             state = ON;
         }
         break;
     case ON:
+        Serial.println("The time passed is: "+String(this->time_start)+" The led is on with intensity: "+String(this->ls->getLightIntensity()) );
         if(this->time_start >= this->t1 || this->ls->getLightIntensity() >= this->THls){
             this->led->switchOff();
             state = OFF;

@@ -13,10 +13,9 @@ class SubSystemLight : public Task{
 
     int period;
     int time_start;
-    bool detected;
 
-    const int THls = 100;
-    const int t1 = 1000;//1s in ms
+    const int THls = 50;
+    const int t1 = 1000;//1s in micros
 
     Light *led;
     Pir *pir;

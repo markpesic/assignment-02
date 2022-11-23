@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "Scheduler.h"
 #include "SubsystemLight.h"
+#include "SubsystemRiverFlow.h"
 
 #define LED_A 13
 #define LED_B 12
@@ -19,12 +20,17 @@ Scheduler sched;
 
 void setup() {
     Serial.begin(9600);
-    Timer1.initialize(10000000);
-    sched.init(250000);
+    Timer1.initialize(1000);
+    sched.init(250);
 
     Task *t0 = new SubSystemLight(LED_A, LS_PIN, PIR_PIN);
-    t0->init(500000);
+    t0->init(500);
     sched.addTask(t0);
+
+    Task *t1 = new SubsystemRiverFlow(LED_B, LED_C, ECHO_PIN, TRIG_PIN, POT_PIN,
+    SDA, SCL, BUTTON_PIN, SERVO_PIN);
+    t1->init(1000);
+    sched.addTask(t1);
 }
 
 void loop() {
