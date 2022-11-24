@@ -38,6 +38,17 @@ void SubsystemRiverFlow::wait2Seconds(){
     this->time_start += period;
 }
 
+long SubsystemRiverFlow::getAngle(float distance){
+    float dist = distance;
+    if(distance <= this->TWL_max){
+        dist = this->TWL_alarm;
+    }else if(distance > this->TWL_alarm){
+        dist = this->TWL_alarm;
+    }
+    return map(round(dist), round(this->TWL_max), round(this->TWL_alarm), 0, 180);
+    
+}
+
 void SubsystemRiverFlow::tick(){
     float distance = this->sonar->getDistance();
     Serial.println("Distance: "+String(distance));
@@ -51,6 +62,7 @@ void SubsystemRiverFlow::tick(){
             this->time_start = 0;
             this->lcd->pre_alarm_display((int)distance);
             disable_light_system = false;
+            this->servo->off();
             Task::init(this->PE_pre_alarm);
         }else if(distance < this->TWL_alarm && distance >= 0.0){
             this->state = this->ALARM;
@@ -58,6 +70,10 @@ void SubsystemRiverFlow::tick(){
             this->led_b->switchOff();
             this->led_c->switchOn();
             disable_light_system = true;
+            this->alpha = getAngle(distance);
+            this->lcd->alarm_display((int)distance,(int) this->alpha);
+            this->servo->on();
+            this->servo->setPosition(this->alpha);
         }
         break;
     case PRE_ALARM:
@@ -70,22 +86,27 @@ void SubsystemRiverFlow::tick(){
             this->led_c->switchOff();
             this->lcd->normal_display();
             disable_light_system = false;
+            this->servo->off();
             Task::init(this->PE_normal);
         }else if(distance < this->TWL_alarm && distance >= 0.0){
             this->state = ALARM;
             Task::init(this->PE_alarm);
             this->led_b->switchOff();
             this->led_c->switchOn();
-            float angle = map((long)distance, (long)this->TWL_max, (long)this->TWL_alarm, 0, 180);
-            this->lcd->alarm_display((int)distance,(int) angle);
+            this->alpha = getAngle(distance);
+            this->lcd->alarm_display((int)distance,(int) this->alpha);
+            this->servo->on();
+            this->servo->setPosition(this->alpha);
             disable_light_system = true;
 
         }
         break;
     case ALARM:
-        long angle = map(round(distance), round(this->TWL_max), round(this->TWL_alarm), 0, 180);
-        Serial.println((int)round(distance));
-        this->lcd->alarm_display((int)round(distance), angle);
+        this->alpha = getAngle(distance);
+        //this->servo->on();
+        this->servo->setPosition(this->alpha);
+        Serial.println(this->alpha);
+        this->lcd->alarm_display((int)round(distance), this->alpha);
         if(distance >= this->TWL_pre_alarm){
             this->state = NORMAL;
             this->time_start = 0;
@@ -93,6 +114,8 @@ void SubsystemRiverFlow::tick(){
             this->led_c->switchOff();
             this->lcd->normal_display();
             disable_light_system = false;
+            this->servo->setPosition(180);
+            this->servo->off();
             Task::init(this->PE_normal);
         }else if(distance < this->TWL_pre_alarm && distance >= this->TWL_alarm){
             this->state = PRE_ALARM;
@@ -101,6 +124,8 @@ void SubsystemRiverFlow::tick(){
             this->time_start = 0;
             this->lcd->pre_alarm_display((int)distance);
             disable_light_system = false;
+            this->servo->setPosition(180);
+            this->servo->off();
             Task::init(this->PE_pre_alarm);
         }
         break;

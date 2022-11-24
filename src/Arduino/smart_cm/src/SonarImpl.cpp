@@ -1,7 +1,7 @@
 #include "SonarImpl.h"
 #include "Arduino.h"
 
-const float vs = 331.45 + 0.62*6;
+const float vs = 331.45 + 0.62*20;
 
 SonarImpl::SonarImpl(int trigPin, int echoPin){
   this->trigPin = trigPin;
