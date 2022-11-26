@@ -49,6 +49,40 @@ long SubsystemRiverFlow::getAngle(float distance){
     
 }
 
+void SubsystemRiverFlow::setNormal(){
+    this->state = NORMAL;
+    this->time_start = 0;
+    this->led_b->switchOn();
+    this->led_c->switchOff();
+    this->lcd->normal_display();
+    disable_light_system = false;
+    this->servo->off();
+    Task::init(this->PE_normal);
+}
+
+void SubsystemRiverFlow::setPreAlarm(float distance){
+    this->state = PRE_ALARM;
+    this->led_c->switchOn();
+    this->led_c->switchOff();
+    this->time_start = 0;
+    this->lcd->pre_alarm_display((int)distance);
+    disable_light_system = false;
+    this->servo->off();
+    Task::init(this->PE_pre_alarm);
+}
+
+void SubsystemRiverFlow::setAlarm(float distance){
+    this->state = this->ALARM;
+    Task::init(this->PE_alarm);
+    this->led_b->switchOff();
+    this->led_c->switchOn();
+    disable_light_system = true;
+    this->alpha = getAngle(distance);
+    this->lcd->alarm_display((int)distance,(int) this->alpha);
+    this->servo->on();
+    this->servo->setPosition(this->alpha);
+}
+
 void SubsystemRiverFlow::tick(){
     float distance = this->sonar->getDistance();
     Serial.println("Distance: "+String(distance));
@@ -56,77 +90,32 @@ void SubsystemRiverFlow::tick(){
     {
     case NORMAL:
         if(distance < this->TWL_pre_alarm && distance >= this->TWL_alarm){
-            this->state = PRE_ALARM;
-            this->led_c->switchOn();
-            this->led_c->switchOff();
-            this->time_start = 0;
-            this->lcd->pre_alarm_display((int)distance);
-            disable_light_system = false;
-            this->servo->off();
-            Task::init(this->PE_pre_alarm);
+            this->setPreAlarm(distance);
         }else if(distance < this->TWL_alarm && distance >= 0.0){
-            this->state = this->ALARM;
-            Task::init(this->PE_alarm);
-            this->led_b->switchOff();
-            this->led_c->switchOn();
-            disable_light_system = true;
-            this->alpha = getAngle(distance);
-            this->lcd->alarm_display((int)distance,(int) this->alpha);
-            this->servo->on();
-            this->servo->setPosition(this->alpha);
+            this->setAlarm(distance);
         }
         break;
     case PRE_ALARM:
         this->lcd->pre_alarm_display(distance);
         this->wait2Seconds();
         if( distance >= this->TWL_pre_alarm){
-            this->state = NORMAL;
-            this->time_start = 0;
-            this->led_b->switchOn();
-            this->led_c->switchOff();
-            this->lcd->normal_display();
-            disable_light_system = false;
-            this->servo->off();
-            Task::init(this->PE_normal);
+            this->setNormal();
         }else if(distance < this->TWL_alarm && distance >= 0.0){
-            this->state = ALARM;
-            Task::init(this->PE_alarm);
-            this->led_b->switchOff();
-            this->led_c->switchOn();
-            this->alpha = getAngle(distance);
-            this->lcd->alarm_display((int)distance,(int) this->alpha);
-            this->servo->on();
-            this->servo->setPosition(this->alpha);
-            disable_light_system = true;
+            this->setAlarm(distance);
 
         }
         break;
     case ALARM:
         this->alpha = getAngle(distance);
-        //this->servo->on();
         this->servo->setPosition(this->alpha);
         Serial.println(this->alpha);
         this->lcd->alarm_display((int)round(distance), this->alpha);
         if(distance >= this->TWL_pre_alarm){
-            this->state = NORMAL;
-            this->time_start = 0;
-            this->led_b->switchOn();
-            this->led_c->switchOff();
-            this->lcd->normal_display();
-            disable_light_system = false;
             this->servo->setPosition(180);
-            this->servo->off();
-            Task::init(this->PE_normal);
+            this->setNormal();
         }else if(distance < this->TWL_pre_alarm && distance >= this->TWL_alarm){
-            this->state = PRE_ALARM;
-            this->led_c->switchOn();
-            this->led_c->switchOff();
-            this->time_start = 0;
-            this->lcd->pre_alarm_display((int)distance);
-            disable_light_system = false;
             this->servo->setPosition(180);
-            this->servo->off();
-            Task::init(this->PE_pre_alarm);
+            this->setPreAlarm(distance);
         }
         break;
     }

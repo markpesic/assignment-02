@@ -51,6 +51,9 @@ public:
     long getAngle(float distance);
     void init(int period);
     void tick();
+    void setPreAlarm(float distance);
+    void setAlarm(float distance);
+    void setNormal();
 
 };
 

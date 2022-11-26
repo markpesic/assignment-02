@@ -26,9 +26,9 @@ void setup() {
     Timer1.initialize(1000);
     sched.init(250);
 
-    // Task *t0 = new SubSystemLight(LED_A, LS_PIN, PIR_PIN);
-    // t0->init(500);
-    // sched.addTask(t0);
+    Task *t0 = new SubSystemLight(LED_A, LS_PIN, PIR_PIN);
+    t0->init(500);
+    sched.addTask(t0);
 
     Task *t1 = new SubsystemRiverFlow(LED_B, LED_C, ECHO_PIN, TRIG_PIN, POT_PIN,
     SDA, SCL, BUTTON_PIN, SERVO_PIN);
