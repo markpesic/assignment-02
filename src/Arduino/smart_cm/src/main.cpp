@@ -2,7 +2,9 @@
 #include "Scheduler.h"
 #include "SubsystemLight.h"
 #include "SubsystemRiverFlow.h"
+#include "manualControlTask.h"
 #include "globals.h"
+#include "ButtonImpl.h"
 
 #define LED_A 13
 #define LED_B 12
@@ -18,12 +20,16 @@
 #define SCL A5
 
 bool disable_light_system = false;
-
+bool manual_control = false;
+int alpha = 0;
+bool is_alarm_state = false;
 Scheduler sched;
+
+//Button *btn;
 
 void setup() {
     Serial.begin(9600);
-    Timer1.initialize(1000);
+    Timer1.initialize(100);
     sched.init(250);
 
     Task *t0 = new SubSystemLight(LED_A, LS_PIN, PIR_PIN);
@@ -34,8 +40,14 @@ void setup() {
     SDA, SCL, BUTTON_PIN, SERVO_PIN);
     t1->init(1000);
     sched.addTask(t1);
+
+    Task *t2 = new ManualControlTask(BUTTON_PIN, POT_PIN, SERVO_PIN);
+    t2->init(50);
+    sched.addTask(t2);
+    //btn = new ButtonImpl(BUTTON_PIN);
 }
 
 void loop() {
     sched.schedule();
+    //Serial.println(btn->isPressed());
 }

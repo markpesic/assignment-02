@@ -2,6 +2,8 @@
 #include "Arduino.h"
 #include "globals.h"
 #include <math.h>
+
+
 SubsystemRiverFlow::SubsystemRiverFlow(int LB_pin, int LC_pin, int echo_pin, int trig_pin, int POT_pin,
     int SDA_pin, int SCL_pin, int button_pin, int servo_pin){
         this->LB_pin = LB_pin;
@@ -27,6 +29,8 @@ void SubsystemRiverFlow::init(int period){
     this->period = period;
     this->led_b->switchOn();
     this->lcd->normal_display();
+    is_alarm_state = false;
+    alpha = 0;
 }
 
 void SubsystemRiverFlow::wait2Seconds(){
@@ -50,6 +54,7 @@ long SubsystemRiverFlow::getAngle(float distance){
 }
 
 void SubsystemRiverFlow::setNormal(){
+    is_alarm_state = false;
     this->state = NORMAL;
     this->time_start = 0;
     this->led_b->switchOn();
@@ -61,6 +66,7 @@ void SubsystemRiverFlow::setNormal(){
 }
 
 void SubsystemRiverFlow::setPreAlarm(float distance){
+    is_alarm_state = false;
     this->state = PRE_ALARM;
     this->led_c->switchOn();
     this->led_c->switchOff();
@@ -72,15 +78,16 @@ void SubsystemRiverFlow::setPreAlarm(float distance){
 }
 
 void SubsystemRiverFlow::setAlarm(float distance){
+    is_alarm_state = true;
     this->state = this->ALARM;
     Task::init(this->PE_alarm);
     this->led_b->switchOff();
     this->led_c->switchOn();
     disable_light_system = true;
-    this->alpha = getAngle(distance);
-    this->lcd->alarm_display((int)distance,(int) this->alpha);
+    alpha = getAngle(distance);
+    this->lcd->alarm_display((int)distance,(int) alpha);
     this->servo->on();
-    this->servo->setPosition(this->alpha);
+    this->servo->setPosition(alpha);
 }
 
 void SubsystemRiverFlow::tick(){
@@ -106,10 +113,12 @@ void SubsystemRiverFlow::tick(){
         }
         break;
     case ALARM:
-        this->alpha = getAngle(distance);
-        this->servo->setPosition(this->alpha);
-        Serial.println(this->alpha);
-        this->lcd->alarm_display((int)round(distance), this->alpha);
+        if(!manual_control){
+            alpha = getAngle(distance);
+            this->servo->setPosition(alpha);
+            Serial.println("AUTOMATIC SERVO MOTOR");
+        }
+        this->lcd->alarm_display((int)round(distance), alpha);
         if(distance >= this->TWL_pre_alarm){
             this->servo->setPosition(180);
             this->setNormal();

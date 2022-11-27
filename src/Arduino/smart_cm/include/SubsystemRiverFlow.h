@@ -32,8 +32,6 @@ class SubsystemRiverFlow : public Task{
     const int PE_pre_alarm = 500;
     const int PE_alarm = 250;
 
-    long alpha = 180;
-
     Light *led_b;
     Light *led_c;
     Sonar *sonar;

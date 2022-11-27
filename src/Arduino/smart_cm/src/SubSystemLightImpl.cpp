@@ -48,7 +48,7 @@ void SubSystemLight::tick(){
             }
             break;
         case ON:
-            Serial.println("The time passed is: "+String(this->time_start)+" The led is on with intensity: "+String(this->ls->getLightIntensity()) );
+            //Serial.println("The time passed is: "+String(this->time_start)+" The led is on with intensity: "+String(this->ls->getLightIntensity()) );
             if(this->time_start >= this->t1 || this->ls->getLightIntensity() >= this->THls){
                 this->led->switchOff();
                 state = OFF;
