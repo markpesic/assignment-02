@@ -10,7 +10,7 @@ void ServoMotorImpl::on(){
 
 void ServoMotorImpl::setPosition(int angle){
   long a = map(angle, 0, 180, 750, 2250);
-  Serial.println("Angolo: "+String(a));
+  //Serial.println("Angolo: "+String(a));
   motor.write(a);              
 }
 

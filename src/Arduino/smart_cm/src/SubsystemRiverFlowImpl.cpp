@@ -92,7 +92,10 @@ void SubsystemRiverFlow::setAlarm(float distance){
 
 void SubsystemRiverFlow::tick(){
     float distance = this->sonar->getDistance();
-    Serial.println("Distance: "+String(distance));
+    //Serial.println("Distance: "+String(distance));
+    String msg = this->state == NORMAL?"NORMAL":this->state == PRE_ALARM?"PRE ALARM":"ALARM";
+    msgManager->sendMsg("WATLV:"+msg);
+    msgManager->sendMsg("DISTA:"+String(distance));
     switch (this->state)
     {
     case NORMAL:
@@ -116,7 +119,7 @@ void SubsystemRiverFlow::tick(){
         if(!manual_control){
             alpha = getAngle(distance);
             this->servo->setPosition(alpha);
-            Serial.println("AUTOMATIC SERVO MOTOR");
+            //Serial.println("AUTOMATIC SERVO MOTOR");
         }
         this->lcd->alarm_display((int)round(distance), alpha);
         if(distance >= this->TWL_pre_alarm){

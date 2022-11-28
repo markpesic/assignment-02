@@ -21,10 +21,10 @@ void ManualControlTask::init(int period){
 void ManualControlTask::tick(){
     switch(this->state){
         case AUTOMATIC:
-        Serial.println("is_alaram_state: "+String(is_alarm_state));
-        Serial.println(this->btn->isPressed());
+        //Serial.println("is_alaram_state: "+String(is_alarm_state));
+        //Serial.println(this->btn->isPressed());
             if(is_alarm_state && this->btn->isPressed()){
-                Serial.println("AUTOMATIC MANAGMENT");
+                //Serial.println("AUTOMATIC MANAGMENT");
                 this->state = MANUAL;
                 manual_control = true;
             }
@@ -34,7 +34,7 @@ void ManualControlTask::tick(){
                 this->state = AUTOMATIC;
                 manual_control = false;
             }else{
-                Serial.println("Pot Value: "+String(this->pot->getValue()));
+                //Serial.println("Pot Value: "+String(this->pot->getValue()));
                 alpha = map(this->pot->getValue(), 0, 1023, 0, 180);
                 this->servo->setPosition(alpha);
             }

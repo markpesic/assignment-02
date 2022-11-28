@@ -3,6 +3,7 @@
 #include "SubsystemLight.h"
 #include "SubsystemRiverFlow.h"
 #include "manualControlTask.h"
+#include "MsgService.h"
 #include "globals.h"
 #include "ButtonImpl.h"
 
@@ -24,11 +25,12 @@ bool manual_control = false;
 int alpha = 0;
 bool is_alarm_state = false;
 Scheduler sched;
+MsgServiceClass *msgManager = new MsgServiceClass();
 
 //Button *btn;
 
 void setup() {
-    Serial.begin(9600);
+    msgManager->init();
     Timer1.initialize(100);
     sched.init(250);
 

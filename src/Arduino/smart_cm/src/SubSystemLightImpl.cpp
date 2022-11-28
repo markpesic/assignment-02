@@ -34,13 +34,16 @@ void SubSystemLight::detectSomeoneAfterT1(){
 }
 
 void SubSystemLight::tick(){
+    String msg = this->state == ON?"ON":"OFF";
+    msgManager->sendMsg("LIGHT:"+msg);
     if(disable_light_system){
         this->led->switchOff();
+        this->state = OFF;
     }else{
         switch (this->state)
         {
         case OFF:
-            Serial.println(String(this->pir->isDetected())+" "+String(this->ls->getLightIntensity()) );
+            //Serial.println(String(this->pir->isDetected())+" "+String(this->ls->getLightIntensity()) );
             if(this->pir->isDetected() && this->ls->getLightIntensity() < this->THls){
                 this->led->switchOn();
                 this->time_start = 0;
