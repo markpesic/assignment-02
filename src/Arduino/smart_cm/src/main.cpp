@@ -1,7 +1,9 @@
+/*marco.pesic@studio.unibo.it
+0000975330
+riccardo.alni@studio.unibo.it
+0000971613*/
 #include <Arduino.h>
 #include "Scheduler.h"
-//#include "SubsystemRiverFlow.h"
-//#include "manualControlTask.h"
 #include "MsgService.h"
 #include "globals.h"
 #include "PirTask.h"
