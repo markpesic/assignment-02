@@ -1,4 +1,6 @@
 Arduino:
 https://liveunibo-my.sharepoint.com/:v:/g/personal/alessandro_agosta_studio_unibo_it/Eakcg3x8VxxInAYLVF3FYgoBVpYLzyazHlahdCDpEKvvDQ?e=DrUcOq
-Graph:
-https://drive.google.com/file/d/1pxZTXm9Z09me1LmU_o4W8UpbGbDZUmgT/view?usp=sharing
+Graphic:
+https://drive.google.com/file/d/1d_3L6UiFcQdCVZBfly4DigkWtCmOsuQ-/view?usp=sharing
+Console:
+https://drive.google.com/file/d/1JruKk0GqSLaEeEBuQK1iXuwHnUvn-rZT/view?usp=sharing
