@@ -1,11 +1,18 @@
 #include <Arduino.h>
 #include "Scheduler.h"
-#include "SubsystemLight.h"
-#include "SubsystemRiverFlow.h"
-#include "manualControlTask.h"
+//#include "SubsystemRiverFlow.h"
+//#include "manualControlTask.h"
 #include "MsgService.h"
 #include "globals.h"
-#include "ButtonImpl.h"
+#include "PirTask.h"
+#include "LightSensorTask.h"
+#include "LedATask.h"
+#include "LCDTask.h"
+#include "LedBTask.h"
+#include "LedCTask.h"
+#include "ControlTask.h"
+#include "MotorTask.h"
+#include "SonarTask.h"
 
 #define LED_A 13
 #define LED_B 12
@@ -24,6 +31,13 @@ bool disable_light_system = false;
 bool manual_control = false;
 int alpha = 0;
 bool is_alarm_state = false;
+bool is_enough_light = false;
+bool is_detected = false;
+enum STATES global_state = NORMAL;
+int PE_normal = 1000;
+int PE_pre_alarm = 500;
+int PE_alarm = 50;
+float distance = 100.0f;
 Scheduler sched;
 MsgServiceClass *msgManager = new MsgServiceClass();
 
@@ -34,19 +48,42 @@ void setup() {
     Timer1.initialize(100);
     sched.init(250);
 
-    Task *t0 = new SubSystemLight(LED_A, LS_PIN, PIR_PIN);
+
+    Task *t0 = new PirTask(PIR_PIN);
     t0->init(500);
     sched.addTask(t0);
 
-    Task *t1 = new SubsystemRiverFlow(LED_B, LED_C, ECHO_PIN, TRIG_PIN, POT_PIN,
-    SDA, SCL, BUTTON_PIN, SERVO_PIN);
-    t1->init(1000);
+    Task *t1 = new LightSensorTask(LS_PIN);
+    t1->init(500);
     sched.addTask(t1);
 
-    Task *t2 = new ManualControlTask(BUTTON_PIN, POT_PIN, SERVO_PIN);
-    t2->init(50);
+    Task *t2 = new LedATask(LED_A);
+    t2->init(500);
     sched.addTask(t2);
-    //btn = new ButtonImpl(BUTTON_PIN);
+
+    Task *t7 = new SonarTask(TRIG_PIN, ECHO_PIN);
+    t7->init(PE_normal);
+    sched.addTask(t7);
+
+    Task *t3 = new LedBTask(LED_B);
+    t3->init(PE_normal);
+    sched.addTask(t3);
+
+    Task *t4 = new LedCTask(LED_C);
+    t4->init(PE_normal);
+    sched.addTask(t4);
+
+    Task *t6 = new ControlTask(BUTTON_PIN, POT_PIN);
+    t6->init(PE_alarm);
+    sched.addTask(t6);
+
+    Task *t5 = new LCDTask();
+    t5->init(PE_normal);
+    sched.addTask(t5);
+
+    Task *t8 = new MotorTask(SERVO_PIN);
+    t8->init(PE_alarm);
+    sched.addTask(t8);
 }
 
 void loop() {

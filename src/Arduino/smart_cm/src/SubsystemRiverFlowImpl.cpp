@@ -34,8 +34,10 @@ void SubsystemRiverFlow::init(int period){
 }
 
 void SubsystemRiverFlow::wait2Seconds(){
-    if(this->time_start >= 2000){
+    if(this->time_start <= 1000){
         this->led_c->switchOn();
+    }
+    if(this->time_start >= 2000){
         this->led_c->switchOff();
         this->time_start = 0;
     }
@@ -68,8 +70,6 @@ void SubsystemRiverFlow::setNormal(){
 void SubsystemRiverFlow::setPreAlarm(float distance){
     is_alarm_state = false;
     this->state = PRE_ALARM;
-    this->led_c->switchOn();
-    this->led_c->switchOff();
     this->time_start = 0;
     this->lcd->pre_alarm_display((int)distance);
     disable_light_system = false;

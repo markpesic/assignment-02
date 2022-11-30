@@ -34,7 +34,7 @@ void ManualControlTask::tick(){
                 this->state = AUTOMATIC;
                 manual_control = false;
             }else{
-                //Serial.println("Pot Value: "+String(this->pot->getValue()));
+                Serial.println("Pot Value: "+String(this->pot->getValue()));
                 alpha = map(this->pot->getValue(), 0, 1023, 0, 180);
                 this->servo->setPosition(alpha);
             }
